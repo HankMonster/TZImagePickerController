@@ -175,14 +175,14 @@ static dispatch_once_t onceToken;
 /// Get Assets 获得照片数组
 - (void)getAssetsFromFetchResult:(PHFetchResult *)result completion:(void (^)(NSArray<TZAssetModel *> *))completion {
     TZImagePickerConfig *config = [TZImagePickerConfig sharedInstance];
-    return [self getAssetsFromFetchResult:result allowPickingVideo:config.allowPickingVideo allowPickingImage:config.allowPickingImage completion:completion];
+    return [self getAssetsFromFetchResult:result allowPickingVideo:config.allowPickingVideo videoMaxSecond:config.videoMaxSecond allowPickingImage:config.allowPickingImage completion:completion];
 }
 
-- (void)getAssetsFromFetchResult:(PHFetchResult *)result allowPickingVideo:(BOOL)allowPickingVideo allowPickingImage:(BOOL)allowPickingImage completion:(void (^)(NSArray<TZAssetModel *> *))completion {
+- (void)getAssetsFromFetchResult:(PHFetchResult *)result allowPickingVideo:(BOOL)allowPickingVideo videoMaxSecond:(NSInteger)videoMaxSecond allowPickingImage:(BOOL)allowPickingImage completion:(void (^)(NSArray<TZAssetModel *> *))completion {
     NSMutableArray *photoArr = [NSMutableArray array];
     [result enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL * _Nonnull stop) {
-        TZAssetModel *model = [self assetModelWithAsset:asset allowPickingVideo:allowPickingVideo allowPickingImage:allowPickingImage];
-        if (model) {
+        TZAssetModel *model = [self assetModelWithAsset:asset allowPickingVideo:allowPickingVideo videoMaxSecond:videoMaxSecond  allowPickingImage:allowPickingImage];
+        if (model) {            
             [photoArr addObject:model];
         }
     }];
@@ -191,7 +191,7 @@ static dispatch_once_t onceToken;
 
 ///  Get asset at index 获得下标为index的单个照片
 ///  if index beyond bounds, return nil in callback 如果索引越界, 在回调中返回 nil
-- (void)getAssetFromFetchResult:(PHFetchResult *)result atIndex:(NSInteger)index allowPickingVideo:(BOOL)allowPickingVideo allowPickingImage:(BOOL)allowPickingImage completion:(void (^)(TZAssetModel *))completion {
+- (void)getAssetFromFetchResult:(PHFetchResult *)result atIndex:(NSInteger)index allowPickingVideo:(BOOL)allowPickingVideo videoMaxSecond:(NSInteger)videoMaxSecond allowPickingImage:(BOOL)allowPickingImage completion:(void (^)(TZAssetModel *))completion {
     PHAsset *asset;
     @try {
         asset = result[index];
@@ -200,11 +200,11 @@ static dispatch_once_t onceToken;
         if (completion) completion(nil);
         return;
     }
-    TZAssetModel *model = [self assetModelWithAsset:asset allowPickingVideo:allowPickingVideo allowPickingImage:allowPickingImage];
+    TZAssetModel *model = [self assetModelWithAsset:asset allowPickingVideo:allowPickingVideo videoMaxSecond:videoMaxSecond allowPickingImage:allowPickingImage];
     if (completion) completion(model);
 }
 
-- (TZAssetModel *)assetModelWithAsset:(PHAsset *)asset allowPickingVideo:(BOOL)allowPickingVideo allowPickingImage:(BOOL)allowPickingImage {
+- (TZAssetModel *)assetModelWithAsset:(PHAsset *)asset allowPickingVideo:(BOOL)allowPickingVideo videoMaxSecond: (NSInteger)videoMaxSecond allowPickingImage:(BOOL)allowPickingImage {
     BOOL canSelect = YES;
     if ([self.pickerDelegate respondsToSelector:@selector(isAssetCanSelect:)]) {
         canSelect = [self.pickerDelegate isAssetCanSelect:asset];
@@ -225,6 +225,8 @@ static dispatch_once_t onceToken;
         }
     }
     NSString *timeLength = type == TZAssetModelMediaTypeVideo ? [NSString stringWithFormat:@"%0.0f",phAsset.duration] : @"";
+    //如果视频超过指定长度，则过滤
+    if (type == TZAssetModelMediaTypeVideo && timeLength.integerValue > videoMaxSecond) return nil;    
     timeLength = [self getNewTimeFromDurationSecond:timeLength.integerValue];
     model = [TZAssetModel modelWithAsset:asset type:type timeLength:timeLength];
     return model;

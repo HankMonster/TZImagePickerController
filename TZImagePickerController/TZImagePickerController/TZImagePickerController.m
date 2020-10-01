@@ -609,6 +609,14 @@
     }
 }
 
+- (void)setVideoMaxSecond:(NSInteger)videoMaxSecond {
+    _videoMaxSecond = videoMaxSecond;
+    [TZImagePickerConfig sharedInstance].videoMaxSecond = videoMaxSecond;
+    if (!videoMaxSecond) {
+        _allowTakeVideo = 60;
+    }
+}
+
 - (void)setPreferredLanguage:(NSString *)preferredLanguage {
     _preferredLanguage = preferredLanguage;
     [TZImagePickerConfig sharedInstance].preferredLanguage = preferredLanguage;
@@ -972,6 +980,7 @@
             config = [[TZImagePickerConfig alloc] init];
             config.preferredLanguage = nil;
             config.gifPreviewMaxImagesCount = 50;
+            config.videoMaxSecond = 60; 
         }
     });
     return config;

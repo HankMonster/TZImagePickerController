@@ -80,6 +80,8 @@
 @property (nonatomic, assign) BOOL allowPickingVideo;
 /// Default is NO / 默认为NO，为YES时可以多选视频/gif/图片，和照片共享最大可选张数maxImagesCount的限制
 @property (nonatomic, assign) BOOL allowPickingMultipleVideo;
+/// Default is 60 seconds / 相册视频最大长度，默认60 
+@property (assign, nonatomic) NSInteger videoMaxSecond;
 
 /// Default is NO, if set YES, user can picking gif image.
 /// 默认为NO，如果设置为YES,用户可以选择gif图片

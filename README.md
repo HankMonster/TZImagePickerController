@@ -1,3 +1,11 @@
+# 修改说明
+增加了一个配置`videoMaxSecond`用于控制可选视频的最大长度，默认60s
+```
+ TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:imageCount delegate:self];
+ // 设置可选视频最大长度180秒
+ imagePickerVc.videoMaxSecond = 180;
+```
+
 # TZImagePickerController
 [![CocoaPods](https://img.shields.io/cocoapods/v/TZImagePickerController.svg?style=flat)](https://github.com/banchichen/TZImagePickerController)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
