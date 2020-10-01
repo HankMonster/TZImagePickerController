@@ -606,24 +606,16 @@ static dispatch_once_t onceToken;
 }
 
 - (void)getVideoOutputPathWithAsset:(PHAsset *)asset presetName:(NSString *)presetName success:(void (^)(NSString *outputPath))success failure:(void (^)(NSString *errorMessage, NSError *error))failure {
-    // PHVideoRequestOptions* options = [[PHVideoRequestOptions alloc] init];
-    // options.deliveryMode = PHVideoRequestOptionsDeliveryModeAutomatic;
-    // options.networkAccessAllowed = YES;
-    // [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:options resultHandler:^(AVAsset* avasset, AVAudioMix* audioMix, NSDictionary* info){
-    //     // NSLog(@"Info:\n%@",info);
-    //     AVURLAsset *videoAsset = (AVURLAsset*)avasset;
-    //     // NSLog(@"AVAsset URL: %@",myAsset.URL);
-    //     [self startExportVideoWithVideoAsset:videoAsset presetName:presetName success:success failure:failure];
-    // }];
-    
-    // https://github.com/banchichen/TZImagePickerController/issues/1073
     PHVideoRequestOptions* options = [[PHVideoRequestOptions alloc] init];
     options.version = PHVideoRequestOptionsVersionOriginal;
     options.deliveryMode = PHVideoRequestOptionsDeliveryModeAutomatic;
     options.networkAccessAllowed = YES;
     [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:options resultHandler:^(AVAsset* avasset, AVAudioMix* audioMix, NSDictionary* info){
-         NSLog(@"Info:\n%@",info);
         AVURLAsset *videoAsset = (AVURLAsset*)avasset;
+
+        // 视频到处失败，根据下面的issue中的建议修改
+        // https://github.com/banchichen/TZImagePickerController/issues/1073
+        // [self startExportVideoWithVideoAsset:videoAsset presetName:presetName success:success failure:failure];
         //在处理120帧无声音视频的时候，直接崩溃，原因是AVURLAsset *videoAsset = (AVURLAsset *)asset;因为asset是个基类，它有时会是AVComposition而不是AVURLAsset，这样就得不到视频的url，从而导致程序崩溃
         if ([videoAsset isKindOfClass:[AVURLAsset class]]) {
             if (videoAsset.URL){
@@ -646,7 +638,8 @@ static dispatch_once_t onceToken;
         }else{
             failure(@"视频导出失败:1003", nil);
         }
-    }];    
+
+    }];
 }
 
 /// Deprecated, Use -getVideoOutputPathWithAsset:failure:success:
