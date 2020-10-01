@@ -1,7 +1,7 @@
 # 修改说明
 增加了一个配置`videoMaxSecond`用于控制可选视频的最大长度，默认60s
 ```
- TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:imageCount delegate:self];
+ TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
  // 设置可选视频最大长度180秒
  imagePickerVc.videoMaxSecond = 180;
 ```
