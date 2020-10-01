@@ -332,4 +332,7 @@
 @property (assign, nonatomic) NSInteger gifPreviewMaxImagesCount;
 /// 【自定义GIF播放方案】为了避免内存过大，内部默认限制只播放50帧（平均取），可通过gifPreviewMaxImagesCount属性调整，若对GIF预览有更好的效果要求，可实现这个block采用FLAnimatedImage等三方库来播放，但注意FLAnimatedImage有播放速度较慢问题，自行取舍下。
 @property (nonatomic, copy) void (^gifImagePlayBlock)(TZPhotoPreviewView *view, UIImageView *imageView, NSData *gifData, NSDictionary *info);
+
+/// 相册视频最大长度，默认60 hank
+@property (assign, nonatomic) NSInteger videoMaxSecond;
 @end
